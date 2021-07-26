@@ -128,6 +128,22 @@ def pixel_pos_of_proj_point_tests():
 
 
 # ====================================================================================================================================================================
-# 3. ??
+# 3. The equation of the epipolar line associated to the pixel
 # ====================================================================================================================================================================
+def epipolar_line_assoc_pixel_test_1():
+    actual = helper.epipolar_line_assoc_pixel(P=np.array([50, 20, 1]).T, T=[5, 4, 1])
+    expected = ((16.0, 45.0), (100.0, 45.0))
+
+    assert(actual == expected)
+
+def epipolar_line_assoc_pixel_test_2():
+    actual = helper.epipolar_line_assoc_pixel(P=np.array([3, 2, 1]).T, T=[1, 2, 3])
+    expected = ((4.0, 8.0), (4.0, 8.0))
+
+    assert(actual == expected)
+
+def epipolar_line_assoc_pixel_tests():
+    epipolar_line_assoc_pixel_test_1()  # Test 1
+    epipolar_line_assoc_pixel_test_2()  # Test 2
+
 

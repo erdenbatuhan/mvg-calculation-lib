@@ -84,6 +84,25 @@ def pixel_pos_of_proj_point(P=None, R=np.identity(3), C=np.array([[0, 0, 0]]).T,
 
 
 # ====================================================================================================================================================================
-# 3. ??
+# 3. The equation of the epipolar line associated to the pixel
 # ====================================================================================================================================================================
+def _hat(v):
+    v1, v2, v3 = v
+    return np.array([
+        [0, -v3, v2],
+        [v3, 0, -v1],
+        [-v2, v1, 0]
+    ])
+
+def epipolar_line_assoc_pixel(P=np.identity(3), R=np.identity(3), T=np.identity(3), return_func=False):
+    l_inter = np.dot(_hat(T), R)
+    l = np.dot(l_inter, P)
+    
+    l1, l2, l3 = l
+    m, b = (-l1, l2), (-l3, l2)
+    
+    if not return_func:
+        return m, b
+    
+    return lambda x: (m[0] / m[1]) * x + (b[0] / b[1])
 
