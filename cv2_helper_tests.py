@@ -97,11 +97,33 @@ def pixel_pos_of_proj_point_test_4():
 
     assert(helper.pixel_pos_of_proj_point(P=P, K=K) == (8, 240.0, 300.0))
 
+def pixel_pos_of_proj_point_test_5():
+    # 3D Point P in world coordinates
+    P = np.array([[8, -1, 1]]).T
+
+    # Transform Matrix (CAM TO WORLD)
+    g_cam_to_world = np.array([
+        [0,   0,  1,  4],
+        [-1,  0,  0,  2],
+        [0,   -1, 0,  3],
+        [0,   0,  0,  1]
+    ])
+
+    # Instrinsic parameter matrix
+    K = np.array([
+        [640,  0,    320],
+        [0,    480,  240],
+        [0,    0,    1]
+    ])
+
+    assert(helper.pixel_pos_of_proj_point(P=P, K=K, g_cam_to_world=g_cam_to_world) == (4, 800.0, 480.0))
+
 def pixel_pos_of_proj_point_tests():
     pixel_pos_of_proj_point_test_1()  # Test 1
     pixel_pos_of_proj_point_test_2()  # Test 2
     pixel_pos_of_proj_point_test_3()  # Test 3
     pixel_pos_of_proj_point_test_4()  # Test 4
+    pixel_pos_of_proj_point_test_5()  # Test 5
 # ====================================================================================================================================================================
 
 

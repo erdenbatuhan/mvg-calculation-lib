@@ -22,7 +22,7 @@ def is_lin_ind(*vectors):
 # ====================================================================================================================================================================
 # 2. Calculate the pixel-position of the projected point (u, v) in the image and tick the correct answer
 # ====================================================================================================================================================================
-def pixel_pos_of_proj_point(P=None, C=np.array([[0, 0, 0]]).T, K=None, print_steps=False):
+def pixel_pos_of_proj_point(P=None, R=np.identity(3), C=np.array([[0, 0, 0]]).T, K=None, g_cam_to_world=None, print_steps=False):
     assert(P is not None and K is not None)  # TEST
 
     # Generic projection matrix
@@ -32,17 +32,25 @@ def pixel_pos_of_proj_point(P=None, C=np.array([[0, 0, 0]]).T, K=None, print_ste
         [0, 0, 1, 0]
     ])
 
-    # Translator (-C)
-    T = np.array([
+    # Translator (-C), g = [R, T] in homogeneous coordinates [[R, T], [0, 1]]
+    G = np.array([
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ])
-    T[:, 3] = np.append(-C, [1])
+
+    # Update translator G
+    G[0:3, 0:3] = R  # Rotation
+    G[:, 3] = np.append(-C, [1])  # Translation
 
     # Cam coordinates
     PC = np.array([np.append(P, [1])]).T
+
+    if g_cam_to_world is not None:
+        # Transform 3D Point P to camera coordinates
+        g_world_to_cam = np.linalg.inv(g_cam_to_world)
+        PC = np.dot(g_world_to_cam, PC)
 
     # Print inputs
     if print_steps:
@@ -53,14 +61,14 @@ def pixel_pos_of_proj_point(P=None, C=np.array([[0, 0, 0]]).T, K=None, print_ste
         print("C:", C)
         print("K:", K)
         print("Generic projection matrix:", PI)
-        print("Translator (-C):", T)
+        print("Translator (-C), g:", G)
         print("Cam coordinates:", PC, end="\n\n")
 
     # ======================================
     # Calculation
     # ======================================
     i1 = np.dot(K, PI)
-    i2 = np.dot(i1, T)
+    i2 = np.dot(i1, G)
     i3 = np.dot(i2, PC)
 
     final = i3
