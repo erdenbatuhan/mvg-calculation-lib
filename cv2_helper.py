@@ -94,9 +94,21 @@ def _hat(v):
         [-v2, v1, 0]
     ])
 
-def epipolar_line_assoc_pixel(P=np.identity(3), R=np.identity(3), T=np.identity(3), return_func=False):
+def epipolar_line_assoc_pixel(P=np.identity(3), R=np.identity(3), T=np.identity(3), funda=None, normalized=True, return_func=False, print_intermediate=False):
     l_inter = np.dot(_hat(T), R)
+
+    if funda is not None:
+        K1, K2 = funda
+
+        l_inter = np.dot(np.linalg.inv(K2).T, l_inter)
+
+        if not normalized:
+            l_inter = np.dot(l_inter, np.linalg.inv(K1))
+
     l = np.dot(l_inter, P)
+
+    if print_intermediate:
+        print("Intermediate step, l:", l)
     
     l1, l2, l3 = l
     m, b = (-l1, l2), (-l3, l2)
